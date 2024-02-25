@@ -36,10 +36,5 @@ def create_voice(voice_type):
 
     elif voice_type == "linkai":
         from voice.linkai.linkai_voice import LinkAIVoice
-
         return LinkAIVoice()
-    elif voice_type == "ali":
-        from voice.ali.ali_voice import AliVoice
-
-        return AliVoice()
     raise RuntimeError

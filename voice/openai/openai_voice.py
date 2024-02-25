@@ -33,8 +33,7 @@ class OpenaiVoice(Voice):
 
     def textToVoice(self, text):
         try:
-            api_base = conf().get("open_ai_api_base") or "https://api.openai.com/v1"
-            url = f'{api_base}/audio/speech'
+            url = 'https://api.openai.com/v1/audio/speech'
             headers = {
                 'Authorization': 'Bearer ' + conf().get("open_ai_api_key"),
                 'Content-Type': 'application/json'

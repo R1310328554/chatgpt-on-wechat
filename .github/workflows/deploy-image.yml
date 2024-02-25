@@ -19,7 +19,6 @@ env:
 
 jobs:
   build-and-push-image:
-    if: github.repository == 'zhayujie/chatgpt-on-wechat'
     runs-on: ubuntu-latest
     permissions:
       contents: read

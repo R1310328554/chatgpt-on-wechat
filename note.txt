@@ -1,0 +1,64 @@
+
+ssl.SSLEOFError: EOF occurred in violation of protocol (_ssl.c:1002)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\lk\tool\py\Lib\site-packages\requests\adapters.py", line 489, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "D:\lk\tool\py\Lib\site-packages\urllib3\connectionpool.py", line 798, in urlopen
+    retries = retries.increment(
+              ^^^^^^^^^^^^^^^^^^
+  File "D:\lk\tool\py\Lib\site-packages\urllib3\util\retry.py", line 592, in increment
+    raise MaxRetryError(_pool, url, error or ResponseError(cause))
+urllib3.exceptions.MaxRetryError: HTTPSConnectionPool(host='wx.qq.com', port=443): Max retries exceeded with url: /cgi-bin/mmwebwx-bin/webwxsync?sid=c/P03TM6rvTyH/ux&skey=@crypt_427282be_57a3c4784b98d6b147fcabf71cbdbd75&pass_ticket=i%2BITypcHiL2tUNUdaTAA9FjsEl57hs3%2FpXlFQCMUX%2BB4BwxpU2Wzo7hidudGDWNRSFr8VfgbAaAfUawVFQY%2Fkw%3D%3D (Caused by SSLError(SSLEOFError(8, 'EOF occurred in violation of protocol (_ssl.c:1002)')))
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "D:\d\git\gpt\chatgpt-on-wechat-1.5.2\lib\itchat\components\login.py", line 301, in maintain_loop
+    msgList, contactList = self.get_msg()
+                           ^^^^^^^^^^^^^^
+  File "D:\d\git\gpt\chatgpt-on-wechat-1.5.2\lib\itchat\components\login.py", line 390, in get_msg
+    r = self.s.post(url, data=json.dumps(data),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\lk\tool\py\Lib\site-packages\requests\sessions.py", line 635, in post
+    return self.request("POST", url, data=data, json=json, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\lk\tool\py\Lib\site-packages\requests\sessions.py", line 587, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\lk\tool\py\Lib\site-packages\requests\sessions.py", line 701, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\lk\tool\py\Lib\site-packages\requests\adapters.py", line 563, in send
+    raise SSLError(e, request=request)
+requests.exceptions.SSLError: HTTPSConnectionPool(host='wx.qq.com', port=443): Max retries exceeded with url: /cgi-bin/mmwebwx-bin/webwxsync?sid=c/P03TM6rvTyH/ux&skey=@crypt_427282be_57a3c4784b98d6b147fcabf71cbdbd75&pass_ticket=i%2BITypcHiL2tUNUdaTAA9FjsEl57hs3%2FpXlFQCMUX%2BB4BwxpU2Wzo7hidudGDWNRSFr8VfgbAaAfUawVFQY%2Fkw%3D%3D (Caused by SSLError(SSLEOFError(8, 'EOF occurred in violation of protocol (_ssl.c:1002)')))
+
+[INFO][2023-12-01 19:28:48][bridge.py:49] - create bot quivr for chat
+[INFO][2023-12-01 19:28:48][quivr_bot.py:44] - [quivr] query=supabase 基础表有哪些，分别什么作用
+[WARNING][2023-12-01 19:28:48][session_manager.py:72] - Exception when counting tokens precisely for prompt: 'Could not automatically map quivr to a tokeniser. Please use `tiktok.get_encoding` to explicitly get the tokeniser you expect.'
+
+
+
+---- 通过api 登录 腾讯微信的次数太多了？
+
+
+
+2
+Exception when counting tokens precisely for prompt: 'Could not automatically map quivr to a tokeniser. Please use `tiktok.get_encoding` to explicitly get the tokeniser you expect.'
+
+
+
+  "open_ai_api_key": "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",
+
+  "open_ai_api_key": "70f860eb151b4b3fbb25767f5520d3a4",
+  "open_ai_api_base": "https://20230620asc.openai.azure.com/",
+  "proxy": "", 
+  "use_azure_chatgpt": true,
+  "azure_deployment_id": "gpt-35-turbo-0613",
+  "azure_api_version": "2023-05-15", 
+
+OPEN_AI_PROXY="https://api.openai.com/v1/"
+

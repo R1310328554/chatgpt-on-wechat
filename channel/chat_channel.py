@@ -4,7 +4,6 @@ import threading
 import time
 from asyncio import CancelledError
 from concurrent.futures import Future, ThreadPoolExecutor
-from concurrent import futures
 
 from bridge.context import *
 from bridge.reply import *
@@ -18,8 +17,6 @@ try:
 except Exception as e:
     pass
 
-handler_pool = ThreadPoolExecutor(max_workers=8)  # 处理消息的线程池
-
 
 # 抽象类, 它包含了与消息通道无关的通用处理逻辑
 class ChatChannel(Channel):
@@ -28,11 +25,17 @@ class ChatChannel(Channel):
     futures = {}  # 记录每个session_id提交到线程池的future对象, 用于重置会话时把没执行的future取消掉，正在执行的不会被取消
     sessions = {}  # 用于控制并发，每个session_id同时只能有一个context在处理
     lock = threading.Lock()  # 用于控制对sessions的访问
+    handler_pool = ThreadPoolExecutor(max_workers=8)  # 处理消息的线程池
 
-    def __init__(self):
-        _thread = threading.Thread(target=self.consume)
+    # def __init__(self):
+    def __init__(self, *args, **kwargs):
+        print('ChatChannel: ', args, kwargs)
+        _thread = threading.Thread(target=self.consume, args=args, kwargs=kwargs)
         _thread.setDaemon(True)
         _thread.start()
+        
+    def startup(self, *args, **kwargs):
+        pass
 
     # 根据消息构造context，消息内容相关的触发项写在这里
     def _compose_context(self, ctype: ContextType, content, **kwargs):
@@ -162,12 +165,13 @@ class ChatChannel(Channel):
 
         return context
 
-    def _handle(self, context: Context):
+    # def _handle(self, context: Context):
+    def _handle(self, context: Context, model_type=None):
         if context is None or not context.content:
             return
-        logger.debug("[WX] ready to handle context: {}".format(context))
+        logger.error("[WX] ready to handle context: {}".format(context), model_type )
         # reply的构建步骤
-        reply = self._generate_reply(context)
+        reply = self._generate_reply(context, model_type=model_type)
 
         logger.debug("[WX] ready to decorate reply: {}".format(reply))
         # reply的包装步骤
@@ -176,7 +180,7 @@ class ChatChannel(Channel):
         # reply的发送步骤
         self._send_reply(context, reply)
 
-    def _generate_reply(self, context: Context, reply: Reply = Reply()) -> Reply:
+    def _generate_reply(self, context: Context, reply: Reply = Reply(), model_type=None) -> Reply:
         e_context = PluginManager().emit_event(
             EventContext(
                 Event.ON_HANDLE_CONTEXT,
@@ -186,9 +190,12 @@ class ChatChannel(Channel):
         reply = e_context["reply"]
         if not e_context.is_pass():
             logger.debug("[WX] ready to handle context: type={}, content={}".format(context.type, context.content))
+            if e_context.is_break():
+                context["generate_breaked_by"] = e_context["breaked_by"]
             if context.type == ContextType.TEXT or context.type == ContextType.IMAGE_CREATE:  # 文字和图片消息
                 context["channel"] = e_context["channel"]
-                reply = super().build_reply_content(context.content, context)
+                # model_type = 'llmcc-1' # test
+                reply = super().build_reply_content(context.content, context, model_type)
             elif context.type == ContextType.VOICE:  # 语音消息
                 cmsg = context["msg"]
                 cmsg.prepare()
@@ -213,7 +220,7 @@ class ChatChannel(Channel):
                 if reply.type == ReplyType.TEXT:
                     new_context = self._compose_context(ContextType.TEXT, reply.content, **context.kwargs)
                     if new_context:
-                        reply = self._generate_reply(new_context)
+                        reply = self._generate_reply(new_context, model_type)
                     else:
                         return
             elif context.type == ContextType.IMAGE:  # 图片消息，当前仅做下载保存到本地的逻辑
@@ -331,7 +338,13 @@ class ChatChannel(Channel):
                 self.sessions[session_id][0].put(context)
 
     # 消费者函数，单独线程，用于从消息队列中取出消息并处理
-    def consume(self):
+    # def consume(self):
+    def consume(self, *args, **kwargs):
+        # print('consume   model_typemodel_type   ', args, kwargs)
+        model_type = None
+        if args and len(args) > 0:
+            model_type = args[1].get("model_type")
+        # print('model_type: ', model_type)
         while True:
             with self.lock:
                 session_ids = list(self.sessions.keys())
@@ -341,7 +354,7 @@ class ChatChannel(Channel):
                         if not context_queue.empty():
                             context = context_queue.get()
                             logger.debug("[WX] consume context: {}".format(context))
-                            future: Future = handler_pool.submit(self._handle, context)
+                            future: Future = self.handler_pool.submit(self._handle, context, model_type=model_type)
                             future.add_done_callback(self._thread_pool_callback(session_id, context=context))
                             if session_id not in self.futures:
                                 self.futures[session_id] = []

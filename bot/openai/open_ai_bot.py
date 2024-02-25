@@ -3,7 +3,7 @@
 import time
 
 import openai
-import openai.error
+# import openai.error
 
 from bot.bot import Bot
 from bot.openai.open_ai_image import OpenAIImage
@@ -57,6 +57,15 @@ class OpenAIBot(Bot, OpenAIImage):
                 else:
                     session = self.sessions.session_query(query, session_id)
                     result = self.reply_text(session)
+                    print('111')
+                    print(result)
+                    print('222')
+                    if not result.get("total_tokens"):
+                        result["total_tokens"] = 0
+                    if not result["completion_tokens"]:
+                        result["completion_tokens"] = 0
+                    if not result["content"]:
+                        result["content"] = '系统异常~~'
                     total_tokens, completion_tokens, reply_content = (
                         result["total_tokens"],
                         result["completion_tokens"],
@@ -94,19 +103,22 @@ class OpenAIBot(Bot, OpenAIImage):
                 "content": res_content,
             }
         except Exception as e:
+            #  暂不支持 openAI 
+            # '{\n  "error": {\n    "message": "This is a chat model and not supported in the v1/completions endpoint. Did you mean to use v1/chat/completions?",\n    "type": "invalid_request_error",\n    "param": "model",\n    "code": null\n  }\n}\n'
+
             need_retry = retry_count < 2
             result = {"completion_tokens": 0, "content": "我现在有点累了，等会再来吧"}
-            if isinstance(e, openai.error.RateLimitError):
+            if isinstance(e, openai.RateLimitError):
                 logger.warn("[OPEN_AI] RateLimitError: {}".format(e))
                 result["content"] = "提问太快啦，请休息一下再问我吧"
                 if need_retry:
                     time.sleep(20)
-            elif isinstance(e, openai.error.Timeout):
+            elif isinstance(e, openai.Timeout):
                 logger.warn("[OPEN_AI] Timeout: {}".format(e))
                 result["content"] = "我没有收到你的消息"
                 if need_retry:
                     time.sleep(5)
-            elif isinstance(e, openai.error.APIConnectionError):
+            elif isinstance(e, openai.APIConnectionError):
                 logger.warn("[OPEN_AI] APIConnectionError: {}".format(e))
                 need_retry = False
                 result["content"] = "我连接不到你的网络"

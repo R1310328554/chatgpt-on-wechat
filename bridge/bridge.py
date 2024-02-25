@@ -19,42 +19,49 @@ class Bridge(object):
             "translate": conf().get("translate", "baidu"),
         }
         model_type = conf().get("model") or const.GPT35
+        # self.btype["chat"] = model_type # 不能这么直接赋值.. 
+        
         if model_type in ["text-davinci-003"]:
             self.btype["chat"] = const.OPEN_AI
         if conf().get("use_azure_chatgpt", False):
             self.btype["chat"] = const.CHATGPTONAZURE
         if model_type in ["wenxin", "wenxin-4"]:
             self.btype["chat"] = const.BAIDU
+            
+        if model_type.startswith("llmcc"):
+            # self.btype["chat"] = const.LLMCC
+            self.btype["chat"] = model_type
+            
+        if model_type in ["quivr"]:
+            self.btype["chat"] = const.QUIVR
+            
         if model_type in ["xunfei"]:
             self.btype["chat"] = const.XUNFEI
-        if model_type in [const.QWEN]:
-            self.btype["chat"] = const.QWEN
-        if model_type in [const.GEMINI]:
-            self.btype["chat"] = const.GEMINI
-        if model_type in [const.ZHIPU_AI]:
-            self.btype["chat"] = const.ZHIPU_AI
-
         if conf().get("use_linkai") and conf().get("linkai_api_key"):
             self.btype["chat"] = const.LINKAI
             if not conf().get("voice_to_text") or conf().get("voice_to_text") in ["openai"]:
                 self.btype["voice_to_text"] = const.LINKAI
             if not conf().get("text_to_voice") or conf().get("text_to_voice") in ["openai", const.TTS_1, const.TTS_1_HD]:
                 self.btype["text_to_voice"] = const.LINKAI
-
         if model_type in ["claude"]:
             self.btype["chat"] = const.CLAUDEAI
         self.bots = {}
         self.chat_bots = {}
 
-    def get_bot(self, typename):
+    def get_bot(self, typename, model_type=None):
+        # 打印当前位置的调用堆栈
+        # import traceback
+        # traceback.print_stack()
+        
         if self.bots.get(typename) is None:
+            print("获取不到， 第一次的话， 需要创建， create bot {} for {}".format(self.btype[typename], typename) , model_type)
             logger.info("create bot {} for {}".format(self.btype[typename], typename))
             if typename == "text_to_voice":
                 self.bots[typename] = create_voice(self.btype[typename])
             elif typename == "voice_to_text":
                 self.bots[typename] = create_voice(self.btype[typename])
             elif typename == "chat":
-                self.bots[typename] = create_bot(self.btype[typename])
+                self.bots[typename] = create_bot(self.btype[typename], model_type=model_type)
             elif typename == "translate":
                 self.bots[typename] = create_translator(self.btype[typename])
         return self.bots[typename]
@@ -62,8 +69,8 @@ class Bridge(object):
     def get_bot_type(self, typename):
         return self.btype[typename]
 
-    def fetch_reply_content(self, query, context: Context) -> Reply:
-        return self.get_bot("chat").reply(query, context)
+    def fetch_reply_content(self, query, context: Context, model_type=None) -> Reply:
+        return self.get_bot("chat", model_type).reply(query, context)
 
     def fetch_voice_to_text(self, voiceFile) -> Reply:
         return self.get_bot("voice_to_text").voiceToText(voiceFile)

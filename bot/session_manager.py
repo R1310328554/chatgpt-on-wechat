@@ -39,12 +39,14 @@ class Session(object):
 class SessionManager(object):
     def __init__(self, sessioncls, **session_args):
         if conf().get("expires_in_seconds"):
-            sessions = ExpiredDict(conf().get("expires_in_seconds"))
+            sessions = ExpiredDict(conf().get("expires_in_seconds")) # 会话过期时间 todo 
         else:
             sessions = dict()
         self.sessions = sessions
         self.sessioncls = sessioncls
         self.session_args = session_args
+        
+        print('SessionManager: ', sessioncls, session_args)
 
     def build_session(self, session_id, system_prompt=None):
         """

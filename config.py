@@ -14,9 +14,13 @@ available_setting = {
     "open_ai_api_key": "",  # openai api key
     # openai apibase，当use_azure_chatgpt为true时，需要设置对应的api base
     "open_ai_api_base": "https://api.openai.com/v1",
+    "llm_api_baseurl": "https://home.asc-ai.cn",
+    "llmccr_host": "https://home.asc-ai.cn",
+    "chat_type": "",
+  
     "proxy": "",  # openai使用的代理
     # chatgpt模型， 当use_azure_chatgpt为true时，其名称为Azure上model deployment名称
-    "model": "gpt-3.5-turbo",  # 还支持 gpt-4, gpt-4-turbo, wenxin, xunfei, qwen
+    "model": "gpt-3.5-turbo",  # 还支持 gpt-4, gpt-4-turbo, wenxin, xunfei
     "use_azure_chatgpt": False,  # 是否使用azure的chatgpt
     "azure_deployment_id": "",  # azure 模型部署名称
     "azure_api_version": "",  # azure api版本
@@ -40,7 +44,6 @@ available_setting = {
     "image_create_prefix": ["画", "看", "找"],  # 开启图片回复的前缀
     "concurrency_in_session": 1,  # 同一会话最多有多少条消息在处理中，大于1可能乱序
     "image_create_size": "256x256",  # 图片大小,可选有 256x256, 512x512, 1024x1024 (dall-e-3默认为1024x1024)
-    "group_chat_exit_group": False, 
     # chatgpt会话参数
     "expires_in_seconds": 3600,  # 无操作会话的过期时间
     # 人格描述
@@ -67,14 +70,6 @@ available_setting = {
     # claude 配置
     "claude_api_cookie": "",
     "claude_uuid": "",
-    # 通义千问API, 获取方式查看文档 https://help.aliyun.com/document_detail/2587494.html
-    "qwen_access_key_id": "",
-    "qwen_access_key_secret": "",
-    "qwen_agent_key": "",
-    "qwen_app_id": "",
-    "qwen_node_id": "",  # 流程编排模型用到的id，如果没有用到qwen_node_id，请务必保持为空字符串
-    # Google Gemini Api Key
-    "gemini_api_key": "",
     # wework的通用配置
     "wework_smart": True,  # 配置wework是否使用已登录的企业微信，False为多开
     # 语音设置
@@ -118,13 +113,14 @@ available_setting = {
     "wechatmp_app_secret": "",  # 微信公众平台的appsecret
     "wechatmp_aes_key": "",  # 微信公众平台的EncodingAESKey，加密模式需要
     # wechatcom的通用配置
-    "wechatcom_corp_id": "",  # 企业微信公司的corpID
+    "wechatcom_corp_id": "ww2a18b64a62fd9aec",  # 企业微信公司的corpID
+    # WeChatGpt001
     # wechatcomapp的配置
-    "wechatcomapp_token": "",  # 企业微信app的token
+    "wechatcomapp_token": "KtfsrEPylNM2hGcBnmy9xLhV9KExWm",  # 企业微信app的token
     "wechatcomapp_port": 9898,  # 企业微信app的服务端口,不需要端口转发
-    "wechatcomapp_secret": "",  # 企业微信app的secret
-    "wechatcomapp_agent_id": "",  # 企业微信app的agent_id
-    "wechatcomapp_aes_key": "",  # 企业微信app的aes_key
+    "wechatcomapp_secret": "WQi4L8maAKuHonaCIJspl9lQTqL8eVNs3hjn0MroLzc",  # 企业微信app的secret
+    "wechatcomapp_agent_id": "1000002",  # 企业微信app的agent_id
+    "wechatcomapp_aes_key": "T2o9TPOKsMVP59tvetgSfwnTMJfTceecocDOtJ8Ie97",  # 企业微信app的aes_key
 
     # 飞书配置
     "feishu_port": 80,  # 飞书bot监听端口
@@ -132,11 +128,7 @@ available_setting = {
     "feishu_app_secret": "",  # 飞书机器人APP secret
     "feishu_token": "",  # 飞书 verification token
     "feishu_bot_name": "",  # 飞书机器人的名字
-    
-    # 钉钉配置
-    "dingtalk_client_id": "",  # 钉钉机器人Client ID 
-    "dingtalk_client_secret": "",  # 钉钉机器人Client Secret 
-    
+
     # chatgpt指令自定义触发词
     "clear_memory_commands": ["#清除记忆"],  # 重置会话指令，必须以#开头
     # channel配置
@@ -148,14 +140,10 @@ available_setting = {
     "plugin_trigger_prefix": "$",  # 规范插件提供聊天相关指令的前缀，建议不要和管理员指令前缀"#"冲突
     # 是否使用全局插件配置
     "use_global_plugin_config": False,
-    "max_media_send_count": 3,     # 单次最大发送媒体资源的个数
-    "media_send_interval": 1,  # 发送图片的事件间隔，单位秒
-    # 智谱AI 平台配置
-    "zhipu_ai_api_key": "",
-    "zhipu_ai_api_base": "https://open.bigmodel.cn/api/paas/v4",
-    # LinkAI平台配置
+    # 知识库平台配置
     "use_linkai": False,
     "linkai_api_key": "",
+    "email": "hnczlk@sina.com",
     "linkai_app_code": "",
     "linkai_api_base": "https://api.link-ai.chat",  # linkAI服务地址，若国内无法访问或延迟较高可改为 https://api.link-ai.tech
 }

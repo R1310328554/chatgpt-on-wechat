@@ -69,7 +69,7 @@ def login(self, enableCmdQR=False, picDir=None, qrCallback=None,
                     logger.info('Please press confirm on your phone.')
                     isLoggedIn = None
                     time.sleep(7)
-                time.sleep(0.5)
+                time.sleep(3) # 0.5 太频繁
             elif status != '408':
                 break
         if isLoggedIn:
@@ -128,9 +128,13 @@ def get_QR(self, uuid=None, enableCmdQR=False, picDir=None, qrCallback=None):
     qrStorage = io.BytesIO()
     qrCode = QRCode('https://login.weixin.qq.com/l/' + uuid)
     qrCode.png(qrStorage, scale=10)
+    # print('qrCode',qrCode.text(1)) # 二维码 
     if hasattr(qrCallback, '__call__'):
+        # print('qrCallback __call__ ',qrCallback)
+        # print('qrCallback __call__ ', qrStorage.getvalue())
         qrCallback(uuid=uuid, status='0', qrcode=qrStorage.getvalue())
     else:
+        print('qrCallback 22 ',qrCallback)
         with open(picDir, 'wb') as f:
             f.write(qrStorage.getvalue())
         if enableCmdQR:
@@ -357,7 +361,7 @@ def sync_check(self):
                        timeout=config.TIMEOUT)
     except requests.exceptions.ConnectionError as e:
         try:
-            if not isinstance(e.args[0].args[1], BadStatusLine):
+            if not isinstance(e.args[0].args[1], BadStatusLine):  # todo IndexError: tuple index out of range 
                 raise
             # will return a package with status '0 -'
             # and value like:
@@ -366,6 +370,10 @@ def sync_check(self):
             return '2'
         except:
             raise
+    except Exception as e:
+        print('登录失败~--')
+        logging.exception(e)
+        
     r.raise_for_status()
     regx = r'window.synccheck={retcode:"(\d+)",selector:"(\d+)"}'
     pm = re.search(regx, r.text)

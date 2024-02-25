@@ -8,7 +8,6 @@ from bridge.reply import *
 
 
 class Channel(object):
-    channel_type = ""
     NOT_SUPPORT_REPLYTYPE = [ReplyType.VOICE, ReplyType.IMAGE]
 
     def startup(self):
@@ -34,8 +33,10 @@ class Channel(object):
         """
         raise NotImplementedError
 
-    def build_reply_content(self, query, context: Context = None) -> Reply:
-        return Bridge().fetch_reply_content(query, context)
+    def build_reply_content(self, query, context: Context = None, model_type=None) -> Reply:
+        print('Channel.build_reply_content: ', query, context, model_type)
+        
+        return Bridge().fetch_reply_content(query, context, model_type)
 
     def build_voice_to_text(self, voice_file) -> Reply:
         return Bridge().fetch_voice_to_text(voice_file)

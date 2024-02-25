@@ -16,8 +16,6 @@ class ContextType(Enum):
     JOIN_GROUP = 20  # 加入群聊
     PATPAT = 21  # 拍了拍
     FUNCTION = 22  # 函数调用
-    EXIT_GROUP = 23 #退出
-
 
     def __str__(self):
         return self.name

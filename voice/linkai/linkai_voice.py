@@ -62,8 +62,7 @@ class LinkAIVoice(Voice):
             data = {
                 "model": model,
                 "input": text,
-                "voice": conf().get("tts_voice_id"),
-                "app_code": conf().get("linkai_app_code")
+                "voice": conf().get("tts_voice_id")
             }
             res = requests.post(url, headers=headers, json=data, timeout=(5, 120))
             if res.status_code == 200:
